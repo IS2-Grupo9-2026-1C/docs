@@ -37,6 +37,17 @@ Para el almacenamiento y gestión de fotos de productos se está evaluando el us
 
 ---
 
+## CI/CD
+
+Se utiliza **GitHub Actions** como plataforma de integración y entrega continua.
+
+El pipeline sigue el siguiente flujo:
+
+1. **Tests** — al hacer push o abrir un PR se ejecuta la suite de tests con pytest via GitHub Actions.
+2. **Deploy** — Railway / Render monitorea continuamente la rama `master` y redespliega automáticamente ante cada actualización, sin necesidad de un paso de deploy explícito en el workflow.
+
+---
+
 ## Proveedores Descartados para este Checkpoint
 
 Se evaluaron las principales plataformas cloud de nivel enterprise como alternativas de hosting:
