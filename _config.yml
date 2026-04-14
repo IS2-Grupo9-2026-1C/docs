@@ -4,7 +4,7 @@ remote_theme: just-the-docs/just-the-docs
 theme: just-the-docs
 
 url: "https://is2-grupo9-2026-1c.github.io"
-baseurl: ""
+baseurl: "/docs"
 
 color_scheme: light
 search_enabled: true
