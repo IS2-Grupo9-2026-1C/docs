@@ -17,9 +17,6 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: docs
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-ruby@v1
@@ -34,7 +31,7 @@ jobs:
           JEKYLL_ENV: production
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: docs/_site
+          path: _site
 
   deploy:
     environment:
