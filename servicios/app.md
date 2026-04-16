@@ -54,16 +54,6 @@ npm run ios
 npm run android
 ```
 
-## Tests
-
-```bash
-# Ejecutar todos los tests
-npm test
-
-# Con reporte de cobertura
-npm run test:coverage
-```
-
 ## Lint y formato
 
 ```bash
@@ -78,30 +68,6 @@ npm run format
 
 # Verificar tipos TypeScript
 npm run typecheck
-```
-
-## Estructura del proyecto
-
-```
-app/
-├── src/
-│   ├── config/          # Configuración de entornos (local / producción)
-│   ├── navigation/      # Stack navigator principal
-│   ├── screens/         # Pantallas de la app
-│   │   ├── LoginScreen.tsx
-│   │   └── HomeScreen.tsx
-│   ├── services/        # Capa de comunicación con el backend
-│   │   ├── api.ts       # Cliente HTTP base
-│   │   └── auth.ts      # Servicio de autenticación
-│   ├── storage/         # Persistencia local
-│   │   └── token.ts     # Manejo del token de sesión
-│   ├── theme/           # Colores, tipografía y espaciado
-│   └── __tests__/       # Tests automatizados
-│       ├── screens/
-│       └── services/
-├── .github/workflows/   # CI/CD con GitHub Actions
-├── App.tsx
-└── package.json
 ```
 
 ## CI/CD
