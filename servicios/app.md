@@ -78,7 +78,6 @@ Cada PR a `master` o `develop` ejecuta automáticamente:
 | ----------- | ----------------------------- |
 | `lint`      | Verifica reglas de ESLint     |
 | `typecheck` | Compila TypeScript sin emitir |
-| `test`      | Corre Jest con cobertura      |
 
 ### CD — Builds automáticos
 
@@ -124,8 +123,8 @@ El APK aparece en **Releases** como pre-release.
 ## Guía de contribución
 
 1. Crear una rama desde `develop`: `git checkout -b feat/nombre-feature`
-2. Desarrollar y agregar tests para el código nuevo
-3. Verificar que `npm test`, `npm run lint` y `npm run typecheck` pasen
+2. Desarrollar la funcionalidad
+3. Verificar que `npm run lint` y `npm run typecheck` pasen
 4. Abrir un Pull Request hacia `develop`
 5. Requiere al menos 1 aprobación antes de mergear
 6. `master` recibe merges únicamente desde branches `release/x.x.x`
