@@ -4,7 +4,7 @@ parent: Servicios
 nav_order: 2
 ---
 
-# Users API - IS2 Grupo 9 (2026 1C)
+# users-api
 
 Backend de usuarios para el trabajo practico grupal de Ingenieria de Software II - FIUBA.
 
