@@ -30,12 +30,14 @@ Proyecto: [IS2-Grupo9-2026-1C/projects/1](https://github.com/orgs/IS2-Grupo9-202
 - **Login con refresh tokens** implementado.
 - **Listado de usuarios** obtenido dinámicamente desde el backend.
 - **Deshabilitar usuarios** (bloqueo/desbloqueo) implementado.
+- **Deshabilitar productors** implementado.
+- **Métricas** de usuarios registrados.
 
 ---
 
 ## Cobertura de historias
 
-### Obligatorias — 11 / 21 cerradas → **27 / 63 pts (42,9 %)**
+### Obligatorias — 17 / 21 cerradas → **48 / 63 pts (76,2 %)**
 
 | # | Historia | Épica | Pts | Estado |
 |---|---|---|---|---|
@@ -50,40 +52,71 @@ Proyecto: [IS2-Grupo9-2026-1C/projects/1](https://github.com/orgs/IS2-Grupo9-202
 | 9 | Agregar producto al carrito | Carrito | 2 | Done |
 | 10 | Gestión del carrito | Carrito | 3 | Done |
 | 14 | Publicar producto | Vendedor | 3 | Done |
-| 11 | Checkout e inicio de pago | Checkout y Órdenes | 8 | In progress |
-| 15 | Gestión de stock y publicaciones | Vendedor | 3 | In progress |
-| 17 | Listar usuarios del sistema | Administración | 1 | In review |
-| 18 | Bloquear y desbloquear usuario | Administración | 2 | In review |
-| 19 | Listar y moderar productos | Administración | 5 | In review |
-| 12 | Estado y seguimiento de orden | Checkout y Órdenes | 5 | No iniciado |
-| 13 | Historial de compras | Checkout y Órdenes | 2 | No iniciado |
+| 11 | Checkout e inicio de pago | Checkout y Órdenes | 8 | Done |
+| 15 | Gestión de stock y publicaciones | Vendedor | 3 | Done |
+| 17 | Listar usuarios del sistema | Administración | 1 | Done |
+| 18 | Bloquear y desbloquear usuario | Administración | 2 | Done |
+| 19 | Listar y moderar productos | Administración | 5 | Parcialmente |
+| 12 | Estado y seguimiento de orden | Checkout y Órdenes | 5 | Done |
+| 13 | Historial de compras | Checkout y Órdenes | 2 | Done |
 | 16 | Historial de ventas | Vendedor | 3 | No iniciado |
 | 20 | Listar órdenes del sistema | Administración | 2 | No iniciado |
-| 21 | Métricas del sistema | Métricas | 5 | No iniciado |
+| 21 | Métricas del sistema | Métricas | 5 | Parcialmente |
+
+1. **Épica Checkout y Órdenes** (15 pts obligatorios) — Checkout (8) fue una de las últimas historias desarrolladas. Falta integración real con proveedor.
+2. **Historial de ventas** (3 pts), **Listar órdenes del sistema** (2 pts) — pendientes; dependían del modelo de órdenes recientemente desarrollado. Listas para comenzar a desarrollar.
+3. **Listar y moderar productos** (5 puntos obligatorios) — Parcialmente finalizada. Desarrollado el listado y moderación de productos, pendiente el *CA 4: Ver detalle del producto* (en desarrollo).
+4. **Métricas del sistema** (5 pts obligatorios) — Iniciada. Solución planteada con nuevo microservicio metrics-api, solo implementadas las métricas de usuarios registrados. 
 
 #### Proyección por estado
 | Estado | Historias | Pts | % obligatorio |
 |---|---|---|---|
-| Done | 11 | 27 | 42,9 % |
-| + In review | +3 | +8 → 35 | 55,6 % |
-| + In progress | +2 | +11 → 46 | 73,0 % |
-| Pendientes sin iniciar | 5 | 17 | — |
+| Done | 17 | 48 | 76,2 % |
+| + Parcialmente (#19, 4/5 pts) | — | +4 → 52 | 82,5 % |
+| + Parcialmente (Métricas, 1/5 pts) | — | +1 → 53 | 84,1 % |
+| Pendientes sin iniciar | 2 | 5 | — |
 
-### Optativas — 1 / 21 cerrada → **2 / 62 pts (3,2 %)**
+### Optativas — 4 / 21 cerradas → **9 / 32 pts (28,1 %)**
 
 | # | Historia | Épica | Pts | Estado |
 |---|---|---|---|---|
 | 24 | Visualización de perfil público | Perfil | 2 | Done |
+| 25 | Compartir link de producto | Catálogo | 2 | Done |
+| 27 | Filtros avanzados de búsqueda | Catálogo | 3 | Done |
+| 28 | Ordenamiento de resultados | Catálogo | 2 | Done |
+
+Se discutió la lista de historias optativas a desarrollar para comenzar a trabajar en ello. Se planea realizar las siguientes: 
+
+- Visualización de perfil público (2 pts).
+- Filtros avanzados de búsqueda (3 pts).
+- Ordenamiento de resultados (2 pts).
+- Link al producto (2 pts).
+- Agregar / quitar de wishlist (2 pts).
+- Visualizar wishlist (2 pts).
+- Gestionar y crear cupones (5 pts):
+- Aplicar cupón en el checkout (3 pts).
+- Notificación de cambio de órden (5 pts).
+- Notificación de stock bajo al vendedor (2 pts).
+- Exportar métricas (2 pts).
+- Métricas por categoría (3 pts).
+
+*Total planificado: 33 pts*
 
 ### Resumen global
-- **Cerrado**: 29 / 125 pts (**23,2 %**)
-- **Proyectado** (Done + In review + In progress): 48 / 125 pts (**38,4 %**)
+- **Cerrado**: 57 / 95 pts (**60,0 %**)
+- **+ Parcialmente** (#19: 4/5 pts, Métricas: 1/5 pts): 62 / 95 pts (**65,3 %**)
+- **Pendientes**: 33 / 95 pts
 
 ---
 
+
+
 ## Riesgos y próximos pasos
 
-1. **Épica Checkout y Órdenes** (15 pts obligatorios) — solo Checkout (8) en progreso. Estado/seguimiento de orden (5) e Historial de compras (2) aún sin arrancar; bloquean el flujo end-to-end de compra.
-2. **Métricas del sistema** (5 pts obligatorios) — no iniciada. Suele requerir instrumentación previa, conviene planificar pronto.
-3. **Historial de ventas** (3 pts) y **Listar órdenes del sistema** (2 pts) — pendientes; dependen del modelo de órdenes ya en desarrollo.
-4. **Optativas**: con solo 2 pts cubiertos hay que validar el mínimo requerido según la cantidad de integrantes y priorizar las de mejor relación esfuerzo/puntaje.
+**Nota:** El requerimiento para el checkpoint 2 era el siguiente: E2E de la plataforma con todos los CRUD básicos al 100% o avanzados. 70% historias requeridas finalizadas, 50% historias optativas finalizadas. Si bien no hay un CRUD básico para cada historia obligatioria, todas las mencionadas están desarrolladas por completo (a excepción de la integración con proveedor real del checkout), más allá de las funcionalidades básicas. Esto se acordó con el corrector y nos permite avanzar directo y más rápidamente con las historias pendientes y requerimientos no funcionales.
+
+1. **Checkout**: sin integración con proveedor real, es necesario implementarlo al ser un requerimiento. Además, hay casos de concurrencia por atender, se analiza aplicar patrón SAGA para mayor robustez y seguridad en las operaciones.
+2. **Comunicación entre microservicios**: actualmente la comunicación interna entre microservicios está implementada para que funcione en el caso feliz, pero hay posible estados inconsistentes en caso de errores. Se analiza aplicar patrón Circuit Breaker o retries con backoff, además de diferenciar los fallos transitorios de red con los permantentes y manejar correctamente ambos casos.
+3. **Rate limiting:** Pendiente implementar rate limiting en los endpoints de login y recupero, que deben tener límite de intentos por IP y por cuenta. Esto debe ser implementado en el gateway y es uno de los próximos pasos
+3. **Tests**: Actualmente se tienen tests unitarios y de integración para cada microservicio, pero están pendientes los tests de integración entre distintos microservicios. Se trabajará en esto cuando se analice lo mencionado en el ítem 2. Además, no hay tests de stress (debe discutirse con corrector qué es lo esperado en este sentido).
+4. **Bugs y diseño**: Bugs detectados y cuestiones de UX son analizadas constantemente. Cada uno de los descubrimientos en este sentido son representados en un issue en el projects y son cuestiones atendidas semana tras semana luego de implementar nuevas features. 
