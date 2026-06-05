@@ -16,10 +16,10 @@ En el milestone **Checkpoint 3** del Project hay **98 items**. Para el corte fin
 
 | Estado | Items |
 |---|---:|
-| Done | 84 |
+| Done | 85 |
 | In progress | 2 |
 | In review | 0 |
-| Backlog | 12 |
+| Backlog | 11 |
 
 ---
 
