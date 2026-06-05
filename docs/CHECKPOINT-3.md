@@ -1,3 +1,9 @@
+---
+title: Checkpoint 3
+parent: Checkpoints
+nav_order: 2
+---
+
 # Checkpoint 3 — IS2 Grupo 9 (2026 1C)
 
 Proyecto: [IS2-Grupo9-2026-1C/projects/1](https://github.com/orgs/IS2-Grupo9-2026-1C/projects/1)
