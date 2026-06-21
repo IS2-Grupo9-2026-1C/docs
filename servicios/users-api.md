@@ -8,6 +8,20 @@ nav_order: 2
 
 Servicio de backend de usuarios. Construido con **Python / FastAPI**.
 
+## Responsabilidades
+
+- Registro, autenticación (JWT) y perfil de usuarios.
+- Recuperación de contraseña por mail vía SendGrid.
+- Registro de push tokens de Expo, consumidos por `orders-api` para las notificaciones.
+- Reporte de eventos de usuarios registrados a `metrics-api`.
+
+## Recuperación de contraseña
+
+Usa SendGrid. Si falta `SENDGRID_API_KEY`, no se envía mail real y se loguea el intento. Variables relacionadas:
+
+- `SENDGRID_API_KEY`
+- `PASSWORD_RECOVERY_FRONTEND_URL`: link puente HTTPS que redirige a la app mobile.
+
 ## Pre-requisitos
 
 - Docker Engine 24+

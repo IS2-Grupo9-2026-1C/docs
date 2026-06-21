@@ -9,8 +9,8 @@ nav_order: 3
 
 | Tecnología | Uso |
 |---|---|
-| **React** | Aplicación web |
-| **React Native** | Aplicación mobile (iOS / Android) |
+| **Expo / React Native** | Aplicación mobile (`app`) |
+| **React / Vite** | Backoffice web (`backoffice`) |
 
 ---
 
@@ -18,9 +18,9 @@ nav_order: 3
 
 | Tecnología | Uso |
 |---|---|
-| **FastAPI** (Python) | `users-api` |
-| **Go** | `items-api` |
-| **Alembic** | Migraciones de base de datos (Python) |
+| **FastAPI** (Python) | `users-api`, `metrics-api` |
+| **Go** | `items-api`, `orders-api` |
+| **SQLAlchemy + Alembic** | ORM y migraciones (servicios Python) |
 
 ---
 
@@ -28,9 +28,7 @@ nav_order: 3
 
 | Tecnología | Tipo | Estado |
 |---|---|---|
-| **PostgreSQL** | Relacional | Confirmado (en Neon) |
-| **MongoDB** | Documental | En evaluación |
-| **Redis** | In-memory / cache | En evaluación |
+| **PostgreSQL** | Relacional | Una base por servicio, en Neon |
 
 ---
 
@@ -42,12 +40,33 @@ nav_order: 3
 
 ---
 
+## Integraciones externas
+
+| Tecnología | Uso |
+|---|---|
+| **Stripe** | Payment provider (`orders-api`) |
+| **SendGrid** | Recuperación de contraseña por mail (`users-api`) |
+| **Expo Push** | Notificaciones push a la app (`orders-api`) |
+| **Cloudinary** | Almacenamiento de imágenes de productos |
+
+---
+
+## Observabilidad
+
+| Tecnología | Uso |
+|---|---|
+| **Prometheus** | Scraping de métricas operativas |
+| **Grafana** | Dashboards operativos por servicio |
+| **cAdvisor** | Métricas de containers (CPU, memoria, red) |
+
+---
+
 ## Testing
 
 | Tecnología | Uso |
 |---|---|
-| **pytest** | API Python / FastAPI |
-| **testing** (stdlib) | API Go |
+| **pytest + Testcontainers** | Servicios Python |
+| **testing** (stdlib) | Servicios Go |
 
 ---
 

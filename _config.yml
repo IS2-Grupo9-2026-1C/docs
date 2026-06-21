@@ -1,5 +1,5 @@
 title: IS2 Docs
-description: Documentación del sistema e-commerce — Ingeniería de Software II FIUBA
+description: Documentación del sistema e-commerce. Ingeniería de Software II FIUBA
 theme: just-the-docs
 
 url: "https://is2-grupo9-2026-1c.github.io"
@@ -21,7 +21,7 @@ aux_links:
   "GitHub":
     - "https://github.com/IS2-Grupo9-2026-1C"
 
-footer_content: "Ingeniería de Software II — FIUBA 2026"
+footer_content: "Ingeniería de Software II - FIUBA 2026"
 
 plugins:
   - jekyll-seo-tag

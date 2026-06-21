@@ -1,7 +1,7 @@
 ---
 title: app
 parent: Servicios
-nav_order: 5
+nav_order: 6
 ---
 
 # App
@@ -79,14 +79,14 @@ Cada PR a `master` o `develop` ejecuta automáticamente:
 | `lint`      | Verifica reglas de ESLint     |
 | `typecheck` | Compila TypeScript sin emitir |
 
-### CD — Builds automáticos
+### CD: builds automáticos
 
 | Evento                                 | Workflow      | Resultado                             |
 | -------------------------------------- | ------------- | ------------------------------------- |
 | Merge de PR `release/x.x.x` → `master` | `cd.yml`      | APK `app-vx.x.x.apk` → GitHub Release |
 | Manual (Actions → Preview Build)       | `preview.yml` | APK de preview → GitHub Pre-Release   |
 
-Los builds usan `eas build --local` (corren en GitHub Actions, no en los servidores de Expo). Los APKs **no aparecen en expo.dev** — se descargan desde la pestaña **Releases** del repo en GitHub.
+Los builds usan `eas build --local` (corren en GitHub Actions, no en los servidores de Expo). Los APKs **no aparecen en expo.dev**, se descargan desde la pestaña **Releases** del repo en GitHub.
 
 ### Release build (en merge a master)
 

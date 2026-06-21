@@ -6,7 +6,7 @@ nav_order: 3
 
 # items-api
 
-Servicio de backend del catálogo de productos. Construido con **Go**.
+Servicio de backend del catálogo de productos y cupones de descuento. Construido con **Go**. Los cupones se validan internamente desde `orders-api` durante el checkout.
 
 ## Pre-requisitos
 
@@ -42,6 +42,8 @@ El servicio incluye logging estructurado JSON en todas las capas (middleware, ha
   "traceId": "req-validation-001"
 }
 ```
+
+**Métricas operativas:** la API expone métricas técnicas en `/metrics`. Prometheus scrapea la API y cAdvisor, y Grafana queda provisionado con el dashboard `Items API - Operational`.
 
 ## Ejecución
 

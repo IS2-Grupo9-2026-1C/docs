@@ -6,7 +6,7 @@ nav_order: 1
 
 # gateway-api
 
-API Gateway centralizado basado en Kong DB-less. Valida tokens JWT (RS256), extrae el ID del usuario (claim `sub`) y lo inyecta como header `X-User-Id` hacia los microservicios.
+API Gateway centralizado basado en Kong DB-less. Valida tokens JWT (RS256), extrae el ID del usuario (claim `sub`) y lo inyecta como header `X-User-Id` hacia los microservicios. Las llamadas internas se autentican con el header `X-Internal-Key`.
 
 ## Pre-requisitos
 
@@ -28,16 +28,19 @@ Esta red debe existir antes de levantar cualquier servicio. Solo se crea una vez
 
 Copiar `.env.example` a `.env` y completar según el entorno:
 
-- `UPSTREAM_USERS_URL` — URL del servicio `users-api`
-- `UPSTREAM_ITEMS_URL` — URL del servicio `items-api`
-- `RSA_PUBLIC_KEY_B64` — clave pública RSA en base64 para validar JWT
+- `UPSTREAM_USERS_URL`: URL del servicio `users-api`
+- `UPSTREAM_ITEMS_URL`: URL del servicio `items-api`
+- `UPSTREAM_ORDERS_URL`: URL del servicio `orders-api`
+- `METRICS_API_URL`: URL del servicio `metrics-api`
+- `RSA_PUBLIC_KEY_B64`: clave pública RSA en base64 para validar JWT
+- `INTERNAL_KEY`: valor del header interno `X-Internal-Key`
 
 ### 3. Generar kong.yml
 
 Kong lee su configuración desde `kong.yml`, que se genera a partir de la plantilla `kong.yml.tpl` sustituyendo las URLs de los upstreams y la clave pública RSA. Este paso es necesario tanto en local como en cada deploy, ya que los valores varían por entorno.
 
 ```bash
-envsubst '${UPSTREAM_USERS_URL} ${UPSTREAM_ITEMS_URL} ${RSA_PUBLIC_KEY}' < kong.yml.tpl > kong.yml
+envsubst '${UPSTREAM_USERS_URL} ${UPSTREAM_ITEMS_URL} ${UPSTREAM_METRICS_URL} ${UPSTREAM_ORDERS_URL} ${RSA_PUBLIC_KEY} ${INTERNAL_KEY}' < kong.yml.tpl > kong.yml
 ```
 
 ## Comandos de ejecución
@@ -53,5 +56,5 @@ El gateway queda disponible en `http://localhost:8000`.
 
 | Endpoint | Semántica |
 |----------|-----------|
-| `GET /livez` | Liveness probe — responde `200 ok` si el proceso Kong está vivo y aceptando conexiones HTTP. No consulta ningún sistema externo. |
-| `GET /readyz` | Readiness probe — verifica el estado interno de Kong consultando su Admin API (`/status`). Confirma que Kong ha cargado su configuración y está operacional. |
+| `GET /livez` | Liveness probe. Responde `200 ok` si el proceso Kong está vivo y aceptando conexiones HTTP. No consulta ningún sistema externo. |
+| `GET /readyz` | Readiness probe. Verifica el estado interno de Kong consultando su Admin API (`/status`). Confirma que Kong cargó su configuración y está operacional. |

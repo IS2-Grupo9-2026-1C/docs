@@ -1,18 +1,16 @@
 ---
 title: backoffice
 parent: Servicios
-nav_order: 6
+nav_order: 7
 ---
 
 # backoffice
 
-Panel de administración del sistema, donde se gestionan los usuarios permisos. Construido con **React**.
-
-{: .note }
-Este servicio está en desarrollo.
+Panel de administración web del sistema. Construido con **React + Vite + TypeScript**. Consume el backend a través del API Gateway.
 
 ## Responsabilidades
 
-- Gestión de usuarios desde el panel administrativo
-- Visualización de métricas y eventos del sistema
-- Administración del catálogo de productos
+- Administración del catálogo de productos.
+- Gestión de órdenes.
+- Visualización de métricas del sistema (usuarios registrados y órdenes por estado).
+- Autenticación de administradores.
