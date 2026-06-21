@@ -5,14 +5,14 @@ nav_order: 3
 
 # Tech Stack
 
-Tecnologías del sistema y el motivo de cada elección.
+Tecnologías del sistema y el motivo de cada elección según el uso que le dimos.
 
 ## Frontend
 
 | Tecnología | Uso | Motivo |
 |---|---|---|
-| **Expo / React Native** | Aplicación mobile (`app`) | Un solo codebase TypeScript para iOS y Android. Expo (EAS) resuelve los builds sin tener que configurar el entorno nativo. |
-| **React / Vite** | Backoffice web (`backoffice`) | SPA liviana para uso interno. Vite da un dev server rápido y un build simple, y comparte TypeScript con la app. |
+| **Expo / React Native** | Aplicación mobile (`app`) | La app es el cliente de los compradores: catálogo, carrito, checkout y notificaciones push. Un solo codebase TypeScript cubre iOS y Android, y Expo (EAS) genera el APK desde GitHub Actions. |
+| **React / Vite** | Backoffice web (`backoffice`) | Panel interno para administrar el catálogo, moderar productos, ver órdenes y métricas. Como es una SPA de uso interno, Vite alcanza y da un dev server rápido. |
 
 ---
 
@@ -20,9 +20,9 @@ Tecnologías del sistema y el motivo de cada elección.
 
 | Tecnología | Uso | Motivo |
 |---|---|---|
-| **FastAPI** (Python) | `users-api`, `metrics-api` | Productividad alta, validación con Pydantic y Swagger automático. Encaja con servicios de CRUD y datos. |
-| **Go** | `items-api`, `orders-api` | Performance y control fino de transacciones y locking, necesarios para el checkout (`SELECT FOR UPDATE` e idempotencia). Binarios chicos para Docker. |
-| **SQLAlchemy + Alembic** | ORM y migraciones (servicios Python) | ORM maduro con migraciones versionadas y reversibles. |
+| **FastAPI** (Python) | `users-api`, `metrics-api` | Ya teníamos experiencia previa con FastAPI y Python, así que arrancamos rápido. Se usa en los servicios de usuarios y métricas, que son registro, login, recuperación de contraseña y agregación de eventos. Pydantic valida los payloads y Swagger documenta los endpoints. |
+| **Go** | `items-api`, `orders-api` | El checkout de `orders-api` necesita transacciones con `SELECT FOR UPDATE` para la reserva de stock y el control de concurrencia del último item. El control fino de `pgx` y `database/sql` encaja mejor que un ORM. `items-api` comparte el mismo runtime. |
+| **SQLAlchemy + Alembic** | ORM y migraciones (servicios Python) | Modelan las tablas de `users-api` y `metrics-api`, con migraciones versionadas y reversibles. |
 
 Los dos servicios Go comparten layout, manejo de errores y middleware, lo que baja el costo de mantener ambos.
 
@@ -32,7 +32,7 @@ Los dos servicios Go comparten layout, manejo de errores y middleware, lo que ba
 
 | Tecnología | Tipo | Motivo |
 |---|---|---|
-| **PostgreSQL** (Neon) | Relacional | Transacciones ACID, requisito para stock y órdenes. Una base por servicio. Neon ofrece Postgres serverless con tier gratis. |
+| **PostgreSQL** (Neon) | Relacional | El stock, las reservas y las órdenes necesitan transacciones ACID para no sobrevender. Cada servicio tiene su propia base (carrito y órdenes, items y cupones, usuarios, métricas). Neon ofrece Postgres serverless con tier gratis. |
 
 Se descartó Redis para el carrito porque la consigna pide persistencia y el volumen del TP no justifica sumar otra pieza de infraestructura.
 
@@ -42,7 +42,7 @@ Se descartó Redis para el carrito porque la consigna pide persistencia y el vol
 
 | Tecnología | Motivo |
 |---|---|
-| **Kong** (DB-less) | Punto de entrada único. Valida JWT y enruta con configuración declarativa (`kong.yml`), sin una base de datos propia que mantener. |
+| **Kong** (DB-less) | Es el único punto de entrada. Valida el JWT, inyecta `X-User-Id` y `X-Internal-Key`, y rutea hacia cada servicio con configuración declarativa (`kong.yml`), sin una base de datos propia que mantener. |
 
 ---
 
@@ -50,10 +50,10 @@ Se descartó Redis para el carrito porque la consigna pide persistencia y el vol
 
 | Tecnología | Uso | Motivo |
 |---|---|---|
-| **Stripe** | Pagos (`orders-api`) | Pasarela estándar con modo test. El SDK maneja los datos de tarjeta, que nunca pasan por nuestro backend. |
-| **SendGrid** | Recuperación de contraseña por mail (`users-api`) | Envío de mails transaccionales con tier gratis. |
-| **Expo Push** | Notificaciones push (`orders-api`) | Integrado al stack Expo de la app, evita montar FCM y APNs por separado. |
-| **Cloudinary** | Imágenes de productos | Hosting y transformación de imágenes con tier gratis. Evita guardar binarios en la base. |
+| **Stripe** | Pagos en el checkout (`orders-api`) | Se cobra a través de una interfaz `PaymentGateway` con Stripe en producción y un mock en tests. Su modo test permite probar el checkout sin cobros reales, y los datos de tarjeta nunca pasan por nuestro backend. |
+| **SendGrid** | Recuperación de contraseña (`users-api`) | Envía el mail con el link de reseteo. Tier gratis suficiente para el TP. |
+| **Expo Push** | Notificaciones de órdenes (`orders-api`) | Avisa al comprador los cambios de estado de la orden. Está integrado al stack Expo de la app, así evitamos montar FCM y APNs por separado. |
+| **Cloudinary** | Imágenes de productos (`items-api`) | Hostea y transforma las imágenes del catálogo con tier gratis, sin guardar binarios en la base. |
 
 ---
 
@@ -61,9 +61,9 @@ Se descartó Redis para el carrito porque la consigna pide persistencia y el vol
 
 | Tecnología | Uso | Motivo |
 |---|---|---|
-| **Prometheus** | Scraping de métricas operativas | Estándar de facto, integra con el resto del stack. |
-| **Grafana** | Dashboards por servicio | Visualización directa sobre Prometheus. |
-| **cAdvisor** | Métricas de containers (CPU, memoria, red) | Expone uso de recursos sin instrumentar el código de la app. |
+| **Prometheus** | Scraping de métricas operativas | `items-api` y `orders-api` exponen sus métricas en `/metrics` y Prometheus las scrapea. |
+| **Grafana** | Dashboards por servicio | Visualiza las métricas de cada servicio sobre Prometheus. |
+| **cAdvisor** | Métricas de containers (CPU, memoria, red) | Expone el uso de recursos de los containers sin instrumentar el código. |
 
 ---
 
@@ -71,8 +71,8 @@ Se descartó Redis para el carrito porque la consigna pide persistencia y el vol
 
 | Tecnología | Uso | Motivo |
 |---|---|---|
-| **pytest + Testcontainers** | Servicios Python | Tests de integración contra una Postgres real y efímera, sin mockear la base. |
-| **testing** (stdlib) | Servicios Go | Alcanza para los servicios Go sin sumar dependencias. |
+| **pytest + Testcontainers** | `users-api`, `metrics-api` | Corren los tests de integración contra una Postgres real y efímera, sin mockear la base. |
+| **testing** (stdlib) | `items-api`, `orders-api` | Alcanza para los servicios Go sin sumar dependencias. |
 
 ---
 
@@ -80,8 +80,8 @@ Se descartó Redis para el carrito porque la consigna pide persistencia y el vol
 
 | Tecnología | Uso | Motivo |
 |---|---|---|
-| **Docker** | Containerización de microservicios | Entorno reproducible e igual entre máquinas. |
-| **Docker Compose** | Orquestación local | Levanta todos los servicios con su base en un comando. |
+| **Docker** | Containerización de microservicios | Cada servicio corre igual en cualquier máquina. |
+| **Docker Compose** | Orquestación local | Levanta el servicio con su base y las migraciones en un comando. |
 
 ---
 
@@ -89,5 +89,5 @@ Se descartó Redis para el carrito porque la consigna pide persistencia y el vol
 
 | Tecnología | Uso | Motivo |
 |---|---|---|
-| **GitHub Actions** | Tests y pipeline de CI | Integrado al repo, corre tests y lint en cada PR sin infra externa. |
+| **GitHub Actions** | Tests y pipeline de CI | Corre lint, typecheck y tests en cada PR, y arma el APK de la app. |
 | **Railway / Render** | Deploy automático desde `master` | Deploy continuo con tier gratis, suficiente para el TP. |
