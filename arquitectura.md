@@ -24,7 +24,7 @@ Ambos clientes se comunican exclusivamente a través del **API Gateway**.
 
 ### API Gateway (`gateway-api`)
 
-Punto de entrada centralizado basado en **Kong DB-less**. Enruta las solicitudes hacia los microservicios, valida tokens JWT (RS256), extrae el ID del usuario (claim `sub`) y lo inyecta como header `X-User-Id` hacia los microservicios internos. Las llamadas service-to-service se autentican con el header `X-Internal-Key`.
+Punto de entrada centralizado basado en **Kong DB-less**. Enruta las solicitudes hacia los microservicios, valida tokens JWT (RS256), extrae el ID del usuario (claim `sub`) y lo inyecta como header `X-User-Id` hacia los microservicios internos. Las llamadas service-to-service se autentican con el header `X-Internal-Key`. En cada request a rutas protegidas consulta una blacklist en **Redis** para revocar al instante a los usuarios baneados (ver [Revocación de JWT](revocacion-jwt)).
 
 ---
 

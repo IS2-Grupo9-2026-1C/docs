@@ -14,6 +14,11 @@ Servicio de backend de usuarios. Construido con **Python / FastAPI**.
 - Recuperación de contraseña por mail vía SendGrid.
 - Registro de push tokens de Expo, consumidos por `orders-api` para las notificaciones.
 - Reporte de eventos de usuarios registrados a `metrics-api`.
+- Bloqueo de usuarios con **revocación inmediata de JWT** (escribe la blacklist en Redis que Kong consulta).
+
+## Revocación de JWT
+
+Al banear un usuario, `block_user` lo marca inactivo en la base, borra sus refresh tokens y escribe `blacklist:<role>:<id>` en Redis (TTL ≈ vida del access token), para que Kong lo rechace al instante. El flujo de refresh, además, verifica contra la base que el usuario siga activo. Si `REDIS_HOST` está vacío, la revocación queda deshabilitada (writer no-op) y los baneos caen al vencimiento natural del token. Variables: `REDIS_HOST`, `REDIS_PORT`, `REDIS_PASSWORD`, `REDIS_TLS`. Ver [Revocación de JWT](../revocacion-jwt).
 
 ## Recuperación de contraseña
 

@@ -33,8 +33,9 @@ Los dos servicios Go comparten layout, manejo de errores y middleware, lo que ba
 | Tecnología | Tipo | Motivo |
 |---|---|---|
 | **PostgreSQL** (Neon) | Relacional | El stock, las reservas y las órdenes necesitan transacciones ACID para no sobrevender. Cada servicio tiene su propia base (carrito y órdenes, items y cupones, usuarios, métricas). Neon ofrece Postgres serverless con tier gratis. |
+| **Redis** (Upstash) | In-memory (efímero) | Soporta la **revocación inmediata de JWT**: `users-api` escribe una entrada de blacklist al banear un usuario y Kong la consulta en cada request. Se eligió por su latencia sub-ms y el TTL nativo, que descarta la entrada sola al expirar el token. Ver [Revocación de JWT](revocacion-jwt). |
 
-Se descartó Redis para el carrito porque la consigna pide persistencia y el volumen del TP no justifica sumar otra pieza de infraestructura.
+El **carrito**, en cambio, se mantiene en PostgreSQL: la consigna pide persistencia y el volumen del TP no justifica moverlo a Redis. Redis se sumó sólo para la blacklist de revocación, donde su naturaleza efímera (TTL) es justamente lo que se necesita.
 
 ---
 

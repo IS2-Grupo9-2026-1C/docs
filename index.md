@@ -20,6 +20,7 @@ El sistema es una plataforma de **Bazaar** donde los usuarios pueden vender y co
 | [Arquitectura](arquitectura) | Diagrama y descripción de los componentes del sistema |
 | [Checkout](checkout) | Flujo de compra, reserva de stock, concurrencia y pagos |
 | [Tech Stack](tech-stack) | Tecnologías utilizadas en frontend, backend, bases de datos y más |
+| [Revocación de JWT](revocacion-jwt) | Baneo inmediato de usuarios con blacklist en Redis |
 | [Servicios](servicios) | Documentación por microservicio |
 
 ## Repositorios

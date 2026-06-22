@@ -83,3 +83,7 @@ Las rutas de **login** y **recuperación de contraseña** tienen rate-limiting p
 ### CSRF (double-submit) para el backoffice
 
 En las operaciones que mutan estado autenticadas por cookie, Kong exige el header `X-CSRF-Token` y lo valida contra la cookie `admin_csrf_token`. La app mobile, al usar `Authorization: Bearer`, no pasa por este control.
+
+### Revocación de JWT (blacklist en Redis)
+
+Tras validar el token, en cada ruta protegida Kong consulta una blacklist en Redis (módulo Lua `lua/revocation.lua.tpl`) y responde `401` si el usuario fue baneado, sin esperar a que el token expire. Requiere las variables `REDIS_*` apuntando al mismo Redis que `users-api`. Ante fallos transitorios hace fail-open; ante misconfiguración persistente (credencial/TLS) hace fail-closed con `503`. Ver [Revocación de JWT](../revocacion-jwt).
