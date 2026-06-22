@@ -29,12 +29,12 @@ TIMEOUT="${TIMEOUT:-90}"
 # Public .onrender.com URLs — fill in the three marked TODO from your Render
 # dashboard (each service's public URL).
 SERVICES=(
-  "gateway-api|https://gateway-api-ih4e.onrender.com"
-  "orders-api|https://orders-api-c8fb.onrender.com"
-  "users-api|https://users-api-xs1b.onrender.com"
-  "items-api|https://items-api-ssdo.onrender.com"
-  "metrics-api|https://metrics-api-8p65.onrender.com"
-  "password-recovery-bridge|https://password-recovery-bridge.onrender.com"
+  "gateway-api|https://gateway-api-1j5h.onrender.com"
+  "orders-api|https://orders-api-hgxh.onrender.com"
+  "users-api|https://users-api-wr4g.onrender.com"
+  "items-api|https://items-api-fvnj.onrender.com"
+  "metrics-api|https://metrics-api-i0r3.onrender.com"
+  "password-recovery-bridge|https://app-bridge.onrender.com"
 )
 
 # Health path. Every service whitelists /livez (no auth, cheap).
