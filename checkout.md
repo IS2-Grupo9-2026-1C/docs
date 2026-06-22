@@ -55,7 +55,7 @@ La ventaja es que el sistema se autolimpia con el propio tráfico: una reserva h
 Dos puntos de control:
 
 - **Último item entre compradores**: la reserva corre dentro de `BEGIN TX` con `SELECT ... FOR UPDATE` sobre el item. El segundo comprador que llega ve la disponibilidad ya descontada por la reserva del primero y recibe `409 insufficient_stock`. El cálculo siempre es `stock - SUM(reservas activas)` bajo lock, así que no hay sobreventa.
-- **Doble checkout del mismo usuario** (doble tap): al crear las órdenes se hace `SELECT ... FOR UPDATE` sobre el carrito. El segundo checkout se serializa detrás del primero y, al obtener el lock, encuentra el carrito vacío.
+- **Doble checkout del mismo usuario** (doble tap): lo controla la `idempotencyKey`. Al entrar al checkout se buscan órdenes previas del usuario con esa key y, si existen, se devuelve el resultado anterior sin volver a cobrar. Si dos requests con la misma key corren en paralelo y ambas pasan ese chequeo, el índice único sobre `(user_id, idempotency_key)` rechaza el `INSERT` de la segunda, que falla sin crear órdenes duplicadas.
 
 El siguiente diagrama muestra el caso de la reserva huérfana: el comprador 1 reserva pero su `orders-api` crashea, el comprador 2 falla mientras la reserva sigue viva, y al reintentar después de los 5 minutos el `DELETE` lazy libera la reserva huérfana y la compra avanza.
 

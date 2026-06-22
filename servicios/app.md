@@ -36,10 +36,14 @@ npm install
 El archivo de configuración está en [src/config/index.ts](src/config/index.ts). Modificá la constante `ENV` para elegir el entorno:
 
 ```ts
-// 'local' apunta a http://localhost:3000
-// 'production' apunta a la URL de producción
+// 'local' apunta al API Gateway local (puerto 8000). En el repo la URL es una IP
+//   de LAN (p. ej. http://192.168.1.38:8000) para poder probar desde un dispositivo
+//   físico; cambiala por la IP de tu máquina o usá http://localhost:8000 en simulador.
+// 'production' apunta a la URL de producción (Render).
 const ENV: Environment = 'local';
 ```
+
+> La URL efectiva se puede sobreescribir sin tocar el código con la variable de entorno `EXPO_PUBLIC_API_URL`.
 
 ## Ejecutar la app
 

@@ -61,9 +61,9 @@ Se descartó Redis para el carrito porque la consigna pide persistencia y el vol
 
 | Tecnología | Uso | Motivo |
 |---|---|---|
-| **Prometheus** | Scraping de métricas operativas | `items-api` y `orders-api` exponen sus métricas en `/metrics` y Prometheus las scrapea. |
-| **Grafana** | Dashboards por servicio | Visualiza las métricas de cada servicio sobre Prometheus. |
-| **cAdvisor** | Métricas de containers (CPU, memoria, red) | Expone el uso de recursos de los containers sin instrumentar el código. |
+| **Prometheus** | Almacenamiento y consulta de métricas operativas | Los servicios exponen sus métricas en `/metrics` (formato Prometheus). En el stack central de observabilidad (`observability/`) Prometheus scrapea un **Pushgateway** al que los servicios publican sus métricas (modelo push), en vez de scrapear cada servicio directamente. |
+| **Grafana** | Dashboards por servicio | Visualiza las métricas sobre Prometheus. |
+| **cAdvisor** | Métricas de containers (CPU, memoria, red) | Expone el uso de recursos de los containers sin instrumentar el código. Se incluye en el `docker-compose` local de cada servicio (`items-api`, `orders-api`, `users-api`), no en el stack central. |
 
 ---
 

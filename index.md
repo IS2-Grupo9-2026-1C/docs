@@ -20,7 +20,6 @@ El sistema es una plataforma de **Bazaar** donde los usuarios pueden vender y co
 | [Arquitectura](arquitectura) | Diagrama y descripción de los componentes del sistema |
 | [Checkout](checkout) | Flujo de compra, reserva de stock, concurrencia y pagos |
 | [Tech Stack](tech-stack) | Tecnologías utilizadas en frontend, backend, bases de datos y más |
-| [Infraestructura](infraestructura) | Hosting, CI/CD, base de datos y decisiones de infraestructura |
 | [Servicios](servicios) | Documentación por microservicio |
 
 ## Repositorios
