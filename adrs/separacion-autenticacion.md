@@ -12,7 +12,7 @@ Aceptado.
 
 ## Contexto
 
-El TP requiere que un administrador no pueda bloquearse a sí mismo (CA 4). La forma naive de cumplirlo sería agregar una validación explícita en el endpoint de bloqueo: comparar el `user_id` del target con el `admin_id` del caller y rechazar si coinciden. Pero el problema con esa solución es que asume que usuarios y admins comparten espacio de identidad, lo cual no es necesariamente cierto ni deseable.
+El TP requiere que un administrador no pueda bloquearse a sí mismo (HU: Bloquear y desbloquear usuario, CA 4). La forma de cumplirlo sería agregar una validación explícita en el endpoint de bloqueo: comparar el `user_id` del target con el `admin_id` del caller y rechazar si coinciden. Pero el problema con esa solución es que asume que usuarios y admins comparten espacio de identidad, lo cual no es necesariamente cierto ni deseable.
 
 ## Decisión
 
@@ -22,6 +22,6 @@ El endpoint `POST /users/{user_id}/block` opera exclusivamente sobre `user_repos
 
 ## Consecuencias
 
-- CA 4 queda satisfecha por diseño estructural, sin ningún `if admin_id == user_id` en el código.
+- CA 4 queda satisfecho por diseño estructural, sin ningún `if admin_id == user_id` en el código.
 - Los IDs de usuarios y admins son secuencias independientes: el admin con id `5` y el usuario con id `5` son entidades distintas sin relación.
-- No hay forma de que un admin se bloquee a sí mismo porque no existe una operación de bloqueo sobre admins.
+- No hay forma de que un admin se bloquee a sí mismo porque no existe una operación de bloqueo sobre admins. Es posible que un admin de mail admin@mail.com bloquee a un usuario de mail admin@mail.com, pero al ser considerados entidades distintas, el CA se sigue cumpliendo.
