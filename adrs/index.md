@@ -18,3 +18,4 @@ Registro de decisiones de arquitectura del sistema.
 | [Revocación de JWT](revocacion-jwt) | |
 | [Gateway de pagos: Stripe](gateway-pagos) | |
 | [Estrategia de consistencia distribuida, idempotencia y retry/backoff](consistencia-distribuida) | |
+| [Clave interna entre servicios](clave-interna-servicios) | Aceptado |
