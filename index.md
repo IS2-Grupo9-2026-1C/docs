@@ -19,6 +19,7 @@ El sistema es una plataforma de **Bazaar** en donde usuarios pueden vender y com
 |---|---|
 | [Arquitectura](arquitectura) | Diagrama y descripción de los componentes del sistema |
 | [Tech Stack](tech-stack) | Tecnologías utilizadas en frontend, backend, bases de datos y más |
+| [Pruebas de Performance](performance/) | Informe de carga, stress, capacidad e idempotencia concurrente |
 | [Infraestructura](infraestructura) | Hosting, CI/CD, base de datos y decisiones de infraestructura |
 | [Servicios](servicios) | Documentación por microservicio |
 
