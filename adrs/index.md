@@ -10,12 +10,13 @@ Registro de decisiones de arquitectura del sistema.
 
 | Decisión | Estado |
 |---|---|
-| [Orden por vendedor en checkout](orden-por-vendedor-checkout) | |
-| [Categorías hardcodeadas en app](categorias-hardcodeadas) | |
-| [Separación de autenticación usuarios y admins](separacion-autenticacion) | |
-| [API Gateway centralizado](api-gateway) | |
 | [Despliegue en la nube](despliegue-nube) | |
-| [Revocación de JWT](revocacion-jwt) | |
-| [Gateway de pagos: Stripe](gateway-pagos) | |
+| [API Gateway centralizado](api-gateway) | |
 | [Estrategia de consistencia distribuida, idempotencia y retry/backoff](consistencia-distribuida) | |
 | [Clave interna entre servicios](clave-interna-servicios) | Aceptado |
+| [Revocación de JWT (NoSQL)](revocacion-jwt) | |
+| [Categorías hardcodeadas en app](categorias-hardcodeadas) | |
+| [Gateway de pagos: Stripe](gateway-pagos) | |
+| [Monto mínimo por ítem para pagos con Stripe](monto-minimo-items) | |
+| [Orden por vendedor en checkout](orden-por-vendedor-checkout) | |
+| [Separación de autenticación usuarios y admins](separacion-autenticacion) | |

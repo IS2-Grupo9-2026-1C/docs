@@ -1,7 +1,7 @@
 ---
 title: Categorías hardcodeadas en app
 parent: ADRs
-nav_order: 2
+nav_order: 6
 ---
 
 # Categorías hardcodeadas en app

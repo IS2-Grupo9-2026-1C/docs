@@ -1,7 +1,7 @@
 ---
 title: API Gateway centralizado
 parent: ADRs
-nav_order: 4
+nav_order: 2
 ---
 
 # API Gateway centralizado
