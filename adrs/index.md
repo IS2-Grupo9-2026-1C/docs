@@ -16,3 +16,4 @@ Registro de decisiones de arquitectura del sistema.
 | [API Gateway centralizado](api-gateway) | |
 | [Despliegue en la nube](despliegue-nube) | |
 | [Revocación de JWT](revocacion-jwt) | |
+| [Gateway de pagos: Stripe](gateway-pagos) | |
