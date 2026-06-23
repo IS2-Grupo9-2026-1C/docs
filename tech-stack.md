@@ -91,4 +91,4 @@ El **carrito**, en cambio, se mantiene en PostgreSQL: la consigna pide persisten
 | Tecnología | Uso | Motivo |
 |---|---|---|
 | **GitHub Actions** | Tests y pipeline de CI | Corre lint, typecheck y tests en cada PR, y arma el APK de la app. |
-| **Railway / Render** | Deploy automático desde `master` | Deploy continuo con tier gratis, suficiente para el TP. |
+| **Render** | Deploy automático desde `master` | Deploy continuo con el free tier, suficiente para el TP. |
