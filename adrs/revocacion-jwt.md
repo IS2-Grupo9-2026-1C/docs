@@ -6,46 +6,40 @@ nav_order: 5
 
 # Revocación de JWT con Redis
 
+## Estado
+
+Aceptado.
+
 ## Contexto de la decisión
 
-La implementación de revocación de tokens JWT fue un requisito obligatorio del trabajo práctico. Al analizar cómo cumplirlo, se evaluó usar Redis o bien una base MongoDB (por ejemplo, para almacenar el carrito de compras junto con la blacklist). Esta segunda opción fue descartada: hubiera sido una decisión forzada por la obligatoriedad del requisito, sin justificación técnica real. En cambio, Redis resuelve un problema genuino que tenía la aplicación — el baneo inmediato de usuarios con tokens aún vigentes — con una solución simple, de baja latencia y coherente con el estado de desarrollo de la plataforma.
+La implementación de revocación de tokens JWT fue un requisito obligatorio del trabajo práctico. Al analizar cómo cumplirlo, se evaluó usar Redis o bien una base MongoDB (por ejemplo, para almacenar el carrito de compras junto con la blacklist). Esta segunda opción fue descartada: hubiera sido una decisión forzada por la obligatoriedad del requisito, sin justificación técnica real. En cambio, Redis resuelve un problema genuino que tenía la aplicación —el baneo inmediato de usuarios con tokens aún vigentes— con una solución simple, de baja latencia y coherente con el estado de desarrollo de la plataforma.
 
----
-
-Cómo se logra que un usuario baneado pierda el acceso **al instante**, en lugar de seguir operando hasta que su token expire naturalmente (~15 min).
+El desafío concreto: cómo lograr que un usuario baneado pierda el acceso **al instante**, en lugar de seguir operando hasta que su token expire naturalmente (~15 min).
 
 ## El problema
 
 El JWT es **autocontenido**: cualquier servicio valida su firma sin consultar una base central. Eso lo hace rápido, pero implica que una vez emitido sigue siendo válido hasta que expira. Si un admin **banea** a un usuario, su token seguiría funcionando hasta 15 minutos más.
 
-La solución es una **blacklist** en **Redis** (in-memory, latencia sub-ms): una marca que dice "rechazar a este usuario ahora", consultada en cada request.
+La solución es una **blacklist** en **Redis** (in-memory, latencia sub-milisegundo): una marca que dice "rechazar a este usuario ahora", consultada en cada request.
 
 ## Las dos mitades
 
-| Rol | Componente | Qué hace |
-|---|---|---|
-| **Writer** | `users-api` | Al banear, escribe la entrada de blacklist en Redis. |
-| **Reader** | `gateway-api` (Kong) | En cada request a una ruta protegida consulta la blacklist y, si el usuario está, corta con `401`. |
+- **Writer — users-api:** al banear, escribe la entrada de blacklist en Redis.
+- **Reader — gateway-api (Kong):** en cada request a una ruta protegida consulta la blacklist y, si el usuario está, rechaza el pedido como no autorizado.
 
 Redis es la lista compartida. Ambos servicios deben apuntar al **mismo** Redis y coincidir en el formato de la clave.
 
 ## Formato de la clave
 
-```
-blacklist:user:42   →   "revoked"   (TTL: ~15 min, igual al del access token)
-```
+La clave es por usuario e incluye el **rol**, con un valor que la marca como revocada y un **TTL igual a la vida del access token** (~15 min): cuando vence, la entrada se borra sola y no se acumula basura. Incluir el rol es necesario porque usuarios y admins numeran sus IDs por separado; sin él, banear al usuario 5 también afectaría al admin 5.
 
-- `42` es el ID del usuario (claim `sub` del JWT).
-- El **TTL** coincide con la vida del access token: cuando vence, la entrada se borra sola (no se acumula basura).
-- La clave incluye el **rol** (`blacklist:user:42` vs `blacklist:admin:42`) porque usuarios y admins numeran sus IDs por separado; sin el rol, banear al user 5 también afectaría al admin 5.
+## Lado writer (users-api)
 
-## Lado writer (`users-api`)
-
-Al bloquear un usuario, `block_user` hace tres cosas:
+Al bloquear un usuario, el flujo hace tres cosas:
 
 1. Marca al usuario como inactivo en la base (fuente de verdad).
 2. Borra sus refresh tokens.
-3. **Escribe `blacklist:user:<id>` en Redis** ← lo que hace el baneo instantáneo.
+3. **Escribe la entrada de blacklist en Redis** ← lo que hace el baneo instantáneo.
 
 ### Segundo candado: el chequeo en el refresh
 
@@ -54,38 +48,31 @@ La blacklist sólo cubre el access token corto. Para que un usuario baneado no g
 - **Blacklist (Redis)** → cierra la puerta por los próximos ~15 min (inmediato).
 - **Chequeo en refresh (base)** → impide obtener una llave nueva (durable).
 
-## Lado reader (`gateway-api`)
+## Lado reader (gateway-api)
 
-Kong consulta la blacklist mediante un módulo Lua (`lua/revocation.lua.tpl`) después de leer el token; si encuentra la entrada, responde `401`.
+Kong consulta la blacklist después de leer el token; si encuentra la entrada, rechaza el request como no autorizado.
 
 ## Configuración
 
-Variables `REDIS_*` en **ambos** servicios:
+La conexión a Redis (host, puerto, credencial y TLS) se configura en **ambos** servicios:
 
-| Variable | Descripción |
-|---|---|
-| `REDIS_HOST` | Host de Redis. **Vacío = revocación deshabilitada** (modo no-op, útil para dev local). |
-| `REDIS_PORT` | Puerto (default `6379`). |
-| `REDIS_PASSWORD` | Credencial. |
-| `REDIS_TLS` | `true` en producción (Upstash). |
-
-- **Local:** un único container `redis` (definido en `users-api/docker-compose.yml`) sobre la red externa `microservices`, con **AOF** activado para sobrevivir reinicios. Kong lo resuelve por el nombre `redis`.
-- **Producción:** Render + **Upstash**; ambos servicios apuntan sus `REDIS_*` al endpoint de Upstash con `REDIS_TLS=true`.
+- Si no se configura un host de Redis, la revocación queda **deshabilitada** (modo no-op, útil para desarrollo local).
+- En producción la conexión usa TLS.
+- **Local:** un único Redis sobre la red de microservicios, con persistencia en disco para sobrevivir reinicios; Kong lo resuelve por nombre.
+- **Producción:** Render + **Upstash**; ambos servicios apuntan a Upstash con TLS.
 
 ## Política de fallos
 
-La revocación es un acelerador sobre la fuente de verdad (la base), así que un problema transitorio de Redis no debe tumbar la plataforma — pero una **misconfiguración persistente** sí debe ser ruidosa:
+La revocación es un acelerador sobre la fuente de verdad (la base), así que un problema transitorio de Redis no debe tumbar la plataforma —pero una **misconfiguración persistente** sí debe ser ruidosa:
 
-| Situación | Comportamiento | Por qué |
-|---|---|---|
-| Redis caído / timeout / error TLS transitorio | **fail-OPEN** (permite) | Un blip no debe cortar todo; la ventana de revocación está acotada por el TTL del access token. |
-| `REDIS_HOST` vacío | **fail-OPEN** (deshabilitado) | Modo "sin Redis" intencional para dev. |
-| `REDIS_PASSWORD` incorrecta / `NOAUTH` | **fail-CLOSED → 503** | Una credencial mala es permanente; fallar abierto desactivaría el control en silencio. |
-| Falla la verificación del certificado TLS | **fail-CLOSED → 503** | Es exactamente el MITM que `ssl_verify` defiende; fallar abierto daría el bypass al atacante. |
+- **Redis caído, timeout o error de TLS transitorio →** fail-OPEN (permite). Un blip no debe cortar todo; la ventana de revocación está acotada por el TTL del access token.
+- **Sin host de Redis configurado →** fail-OPEN (deshabilitado). Modo "sin Redis" intencional para desarrollo.
+- **Credencial inválida →** fail-CLOSED (error de servicio). Una credencial mala es permanente; fallar abierto desactivaría el control en silencio.
+- **Falla la verificación del certificado TLS →** fail-CLOSED (error de servicio). Es exactamente el ataque de intermediario que la verificación de certificado defiende; fallar abierto le daría el bypass al atacante.
 
-> Consecuencia operativa: una credencial mal puesta en el **gateway** produce `503` en las rutas protegidas (no una degradación silenciosa). Rotá el token de Upstash y el `REDIS_PASSWORD` del gateway **juntos**.
+> Consecuencia operativa: una credencial mal puesta en el **gateway** produce un error de servicio en las rutas protegidas (no una degradación silenciosa). Rotá la credencial de Upstash y la del gateway **juntas**.
 
 ## Decisiones de diseño
 
 - **El logout no escribe en la blacklist:** la blacklist es por *usuario*, no por dispositivo, así que desloguearte en el teléfono no debería cerrarte la sesión en la notebook. El logout sólo borra el refresh token de esa sesión.
-- **Los admins no se blacklistean:** no existe la feature de bloquear admins, pero el formato de clave es role-aware y permitiría agregarlo sin plomería extra.
+- **Los admins no se blacklistean:** no existe la feature de bloquear admins, pero el formato de clave contempla el rol y permitiría agregarlo sin plomería extra.
