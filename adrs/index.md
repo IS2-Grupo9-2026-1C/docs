@@ -10,8 +10,8 @@ Registro de decisiones de arquitectura del sistema.
 
 | Decisión | Estado |
 |---|---|
-| [Despliegue en la nube](despliegue-nube) | |
-| [API Gateway centralizado](api-gateway) | |
+| [Despliegue en la nube](despliegue-nube) | Aceptado |
+| [API Gateway centralizado](api-gateway) | Aceptado |
 | [Estrategia de consistencia distribuida, idempotencia y retry/backoff](consistencia-distribuida) | Aceptado |
 | [Clave interna entre servicios](clave-interna-servicios) | Aceptado |
 | [Revocación de JWT (NoSQL)](revocacion-jwt) | |
@@ -20,3 +20,4 @@ Registro de decisiones de arquitectura del sistema.
 | [Monto mínimo por ítem para pagos con Stripe](monto-minimo-items) | Aceptado |
 | [Orden por vendedor en checkout](orden-por-vendedor-checkout) | |
 | [Separación de autenticación usuarios y admins](separacion-autenticacion) | |
+| [Observabilidad de métricas: push vs. pull](observabilidad-push-vs-pull) | Aceptado |
