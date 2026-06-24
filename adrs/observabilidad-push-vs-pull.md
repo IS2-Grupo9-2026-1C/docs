@@ -1,7 +1,7 @@
 ---
 title: "Observabilidad de métricas: push vs. pull"
 parent: ADRs
-nav_order: 11
+nav_order: 12
 ---
 
 # Observabilidad de métricas: push vs. pull

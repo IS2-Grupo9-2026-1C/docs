@@ -1,7 +1,7 @@
 ---
 title: "Revocación de JWT (NoSQL)"
 parent: ADRs
-nav_order: 5
+nav_order: 6
 ---
 
 # Revocación de JWT con Redis

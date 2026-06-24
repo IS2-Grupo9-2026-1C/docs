@@ -1,7 +1,7 @@
 ---
 title: Monto mínimo por ítem para pagos con Stripe
 parent: ADRs
-nav_order: 8
+nav_order: 9
 ---
 
 # Monto mínimo por ítem para pagos con Stripe

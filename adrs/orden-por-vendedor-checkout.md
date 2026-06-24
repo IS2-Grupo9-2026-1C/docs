@@ -1,7 +1,7 @@
 ---
 title: Orden por vendedor en checkout
 parent: ADRs
-nav_order: 9
+nav_order: 10
 ---
 
 # Orden por vendedor en checkout

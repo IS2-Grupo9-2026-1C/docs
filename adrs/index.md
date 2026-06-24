@@ -10,6 +10,7 @@ Registro de decisiones de arquitectura del sistema.
 
 | Decisión | Estado |
 |---|---|
+| [Descomposición en microservicios y bounded contexts](descomposicion-servicios) | Aceptado |
 | [Despliegue en la nube](despliegue-nube) | Aceptado |
 | [API Gateway centralizado](api-gateway) | Aceptado |
 | [Estrategia de consistencia distribuida, idempotencia y retry/backoff](consistencia-distribuida) | Aceptado |
