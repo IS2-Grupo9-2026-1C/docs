@@ -18,6 +18,6 @@ Registro de decisiones de arquitectura del sistema.
 | [Categorías hardcodeadas en app](categorias-hardcodeadas) | Aceptado |
 | [Gateway de pagos: Stripe](gateway-pagos) | Aceptado |
 | [Monto mínimo por ítem para pagos con Stripe](monto-minimo-items) | Aceptado |
-| [Orden por vendedor en checkout](orden-por-vendedor-checkout) | |
+| [Orden por vendedor en checkout](orden-por-vendedor-checkout) | Aceptado |
 | [Separación de autenticación usuarios y admins](separacion-autenticacion) | Aceptado |
 | [Observabilidad de métricas: push vs. pull](observabilidad-push-vs-pull) | Aceptado |
