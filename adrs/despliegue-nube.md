@@ -28,6 +28,7 @@ Adoptamos un esquema de hosting repartido entre varios proveedores, eligiendo en
 - **Servicios de aplicación en Render** (con base de datos PostgreSQL en **Neon**). Empezamos con Railway + Neon, pero cambiamos rápidamente a Render + Neon por tener un plan gratuito más cómodo y generoso. En Render se hostean el gateway, los servicios de usuarios, órdenes, ítems y métricas, y un *bridge* para la recuperación de contraseña de la app (redirige a la sección de la aplicación donde se restablece la contraseña).
 - **Observabilidad (Loki + Grafana) en una VM de Oracle Cloud**, aprovechando su plan gratuito. Para acceder a los dashboards de Grafana usamos No-IP como dominio.
 - **Redis en la nube con Upstash.**
+- **Imágenes de productos en Cloudinary**, que las almacena y gestiona (hosting y transformaciones) en su tier gratuito, sin guardar binarios en la base; los servicios solo persisten la URL.
 - **Backoffice en GitHub Pages.**
 - **Integración continua (CI) con GitHub Actions:** las verificaciones de cada repositorio (tests y build) corren en GitHub Actions.
 - **Despliegue continuo (CD) de la aplicación móvil con GitHub Actions:** el CD de la app se ejecuta desde GitHub Actions, que dispara el build en el servidor de Expo. Expo genera el APK y la distribución es **manual**: cada usuario descarga el APK desde ahí (no hay publicación en tiendas).
