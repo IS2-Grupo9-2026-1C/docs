@@ -1,0 +1,29 @@
+docs/assets/c4/nivel3-items-api.puml
+  s_e6a059ab72028e::t_0cbb64644565c9 1-59
+docs/assets/c4/nivel3-orders-api.puml
+  s_e6a059ab72028e::t_dc6bca45338775 1-79
+docs/assets/c4/nivel3-metrics-api.puml
+  s_e6a059ab72028e::t_6f59632679fd3f 1-40
+docs/arquitectura.md
+  s_e6a059ab72028e::t_65bcf1da3ae4d9 11,19,27,37,41,45,49
+docs/assets/c4/nivel3-users-api.puml
+  s_e6a059ab72028e::t_1698d2c827dbad 1-61
+docs/assets/c4/nivel1-contexto.puml
+  s_e6a059ab72028e::t_2a5f492ececa69 1-30
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "dc879ade51fbf6aa93694b2975d8ac1799a72c6f",
+  "prompts": {},
+  "sessions": {
+    "s_e6a059ab72028e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "cb42e9cf-411a-4755-b9eb-e736d45b3f2c",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Ezequiel Martin Tosto Valenzuela <tostoezequiel1@gmail.com>"
+    }
+  }
+}
