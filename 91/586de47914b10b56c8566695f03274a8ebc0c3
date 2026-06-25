@@ -1,0 +1,24 @@
+docs/arquitectura.md
+  s_e6a059ab72028e::t_7b9e773a9dda61 74-95
+  s_e6a059ab72028e::t_b1431efb52624b 28-38
+  s_e6a059ab72028e::t_c8a8ed872bdadf 130-141,143-145
+  s_e6a059ab72028e::t_b81a5484c129e2 172-184,187
+  s_e6a059ab72028e::t_97bdeb41b9df3d 220-234,237-241
+  s_e6a059ab72028e::t_dd2a12e83b496a 263-270
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "91586de47914b10b56c8566695f03274a8ebc0c3",
+  "prompts": {},
+  "sessions": {
+    "s_e6a059ab72028e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "cb42e9cf-411a-4755-b9eb-e736d45b3f2c",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Ezequiel Martin Tosto Valenzuela <tostoezequiel1@gmail.com>"
+    }
+  }
+}
