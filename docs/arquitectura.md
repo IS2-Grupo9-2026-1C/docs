@@ -48,6 +48,10 @@ Un diagrama por cada microservicio, mostrando sus módulos internos principales.
 
 ![Componentes metrics-api](assets/img/nivel3-metrics-api.png)
 
+#### render-observability
+
+![Componentes render-observability](assets/img/nivel3-render-observability.png)
+
 ---
 
 ## Componentes del Sistema

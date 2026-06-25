@@ -1,0 +1,32 @@
+@startuml nivel3-render-observability
+!include <C4/C4_Component>
+
+LAYOUT_TOP_DOWN()
+LAYOUT_WITH_LEGEND()
+title Nivel 3 — Componentes: render-observability
+
+Container_Ext(users, "users-api")
+Container_Ext(items, "items-api")
+Container_Ext(orders, "orders-api")
+Person_Ext(admin, "Administrador")
+
+Container_Boundary(c, "render-observability") {
+    Component(caddy, "Caddy", "Reverse Proxy", "TLS termination y\nautenticación básica\npara el endpoint de push")
+    Component(pushgateway, "Pushgateway", "Prometheus Pushgateway", "Recibe y almacena métricas\npusheadas por los servicios")
+    Component(prometheus, "Prometheus", "Prometheus v2", "Scraping del Pushgateway\ncada 15 segundos")
+    Component(grafana, "Grafana", "Grafana v11", "Dashboards operacionales\npor servicio")
+}
+
+Lay_D(caddy, pushgateway)
+Lay_D(pushgateway, prometheus)
+Lay_D(prometheus, grafana)
+
+Rel(users, caddy, "PUT /metrics", "HTTPS cada 15s")
+Rel(items, caddy, "PUT /metrics", "HTTPS cada 15s")
+Rel(orders, caddy, "PUT /metrics", "HTTPS cada 15s")
+Rel(caddy, pushgateway, "Proxy autenticado", "HTTP")
+Rel(prometheus, pushgateway, "Scrape", "HTTP cada 15s")
+Rel(grafana, prometheus, "Datasource", "HTTP")
+Rel(admin, grafana, "Visualiza métricas", "HTTPS")
+
+@enduml
