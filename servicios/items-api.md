@@ -6,7 +6,59 @@ nav_order: 3
 
 # items-api
 
-Servicio de backend del catálogo de productos. Construido con **Go**.
+Servicio de backend del catálogo de productos y cupones de descuento. Construido con **Go**. Los cupones se validan internamente desde `orders-api` durante el checkout. Las imágenes de los productos se hostean en **Cloudinary**.
+
+## Funcionalidades
+
+### Catálogo de productos
+
+| Método | Ruta | Descripción |
+|---|---|---|
+| `POST` | `/items` | Crear un item |
+| `GET` | `/items` | Listar el catálogo público |
+| `GET` | `/items/{id}` | Detalle de un item |
+| `GET` | `/my-items` | Items del vendedor autenticado |
+| `GET` | `/my-items/{id}` | Detalle de un item propio |
+| `PATCH` | `/items/{id}` | Editar un item |
+| `DELETE` | `/items/{id}` | Eliminar un item |
+| `POST` / `PUT` | `/items/{id}/images` | Subir / reemplazar imágenes (Cloudinary) |
+
+### Reserva de stock (consumida por `orders-api` en el checkout)
+
+| Método | Ruta | Descripción |
+|---|---|---|
+| `POST` | `/items/{id}/reserve` | Reserva stock con TTL de 5 min (no descuenta `stock`, inserta en `stock_reservations`). Devuelve `409` si no hay disponibilidad |
+| `POST` | `/items/{id}/commit-reservation` | Confirma la reserva: descuenta `stock` y borra la fila de reserva |
+| `POST` | `/items/{id}/release` | Libera la reserva sin tocar el stock |
+
+La disponibilidad se calcula como `stock - SUM(reservas activas)` bajo `SELECT ... FOR UPDATE`, y las reservas vencidas se borran de forma lazy en la misma transacción. Ver [Checkout](../checkout) para el flujo completo.
+
+### Administración (backoffice)
+
+| Método | Ruta | Descripción |
+|---|---|---|
+| `GET` | `/admin/items` | Listar items para moderación |
+| `GET` | `/admin/items/{id}` | Detalle administrativo |
+| `POST` | `/admin/items/{id}/disable` · `/enable` | Deshabilitar / habilitar un item |
+
+### Cupones
+
+| Método | Ruta | Descripción |
+|---|---|---|
+| `POST` | `/coupons` | Crear un cupón |
+| `GET` | `/my-coupons` | Cupones del vendedor |
+| `PATCH` / `DELETE` | `/coupons/{id}` | Editar / eliminar un cupón |
+
+### Endpoints internos (autenticados con `X-Internal-Key`)
+
+| Método | Ruta | Consumidor | Descripción |
+|---|---|---|---|
+| `POST` | `/internal/coupons/validate` | `orders-api` | Validar un cupón en el checkout |
+| `POST` | `/internal/coupons/redeem` | `orders-api` | Registrar la redención |
+| `POST` | `/internal/coupons/release-redemption` | `orders-api` | Liberar una redención reservada |
+| `POST` | `/sellers/{sellerId}/block` · `/unblock` | `users-api` | Bloquear / desbloquear los items de un vendedor |
+
+> La lista completa de parámetros y respuestas está en el Swagger del servicio (ver más abajo).
 
 ## Pre-requisitos
 
@@ -42,6 +94,8 @@ El servicio incluye logging estructurado JSON en todas las capas (middleware, ha
   "traceId": "req-validation-001"
 }
 ```
+
+**Métricas operativas:** la API expone métricas técnicas en `/metrics`. Prometheus scrapea la API y cAdvisor, y Grafana queda provisionado con el dashboard `Items API - Operational`.
 
 ## Ejecución
 

@@ -1,0 +1,92 @@
+@startuml nivel2-contenedores
+!include <C4/C4_Container>
+
+LAYOUT_TOP_DOWN()
+LAYOUT_WITH_LEGEND()
+title Nivel 2 — Contenedores: Bazaar
+
+Person(usuario, "Usuario", "Comprador / vendedor")
+Person_Ext(admin, "Administrador")
+
+System_Ext(stripe, "Stripe", "Pagos")
+System_Ext(sendgrid, "SendGrid", "Emails")
+System_Ext(cloudinary, "Cloudinary", "Imágenes")
+System_Ext(expo, "Expo Push", "Notificaciones")
+
+System_Boundary(bazaar, "Bazaar") {
+    Container(app, "App Mobile", "React Native / Expo", "Interfaz para usuarios finales\n(iOS y Android)")
+    Container(backoffice, "Backoffice", "React + Vite", "Panel web de administración")
+    Container(gateway, "API Gateway", "Kong DB-less", "Valida JWT, inyecta X-User-Id,\naplica rate limiting")
+
+    Container(users, "users-api", "Python / FastAPI", "Registro, autenticación y perfiles")
+    Container(items, "items-api", "Go / Gin", "Catálogo, stock y cupones")
+    Container(orders, "orders-api", "Go / Gin", "Carrito, checkout y órdenes")
+    Container(metrics, "metrics-api", "Python / FastAPI", "Agregación de métricas de negocio")
+
+    ContainerDb(db_users, "users DB", "PostgreSQL / Neon", "Usuarios y tokens")
+    ContainerDb(db_items, "items DB", "PostgreSQL / Neon", "Productos y stock")
+    ContainerDb(db_orders, "orders DB", "PostgreSQL / Neon", "Carritos y órdenes")
+    ContainerDb(db_metrics, "metrics DB", "PostgreSQL / Neon", "Eventos y agregados")
+    ContainerDb(redis, "Redis", "Upstash", "Blacklist JWT")
+
+    Container(obs, "render-observability", "Prometheus + Grafana\n+ Pushgateway + Caddy", "Recolecta y visualiza métricas\nde infraestructura de todos los servicios")
+}
+
+' Layout clientes arriba
+Lay_L(app, backoffice)
+Lay_D(app, gateway)
+
+' Gateway a servicios
+Lay_D(gateway, users)
+Lay_R(users, items)
+Lay_R(items, orders)
+Lay_R(orders, metrics)
+
+' Servicios a sus bases de datos
+Lay_D(users, db_users)
+Lay_D(items, db_items)
+Lay_D(orders, db_orders)
+Lay_D(metrics, db_metrics)
+Lay_L(redis, db_users)
+
+' Externos de negocio
+Lay_R(orders, stripe)
+Lay_R(orders, expo)
+Lay_L(users, sendgrid)
+Lay_L(items, cloudinary)
+
+' Observabilidad abajo
+Lay_D(db_users, obs)
+Lay_D(db_metrics, obs)
+
+Rel(usuario, app, "Usa")
+Rel(admin, backoffice, "Usa")
+Rel(app, gateway, "HTTPS")
+Rel(backoffice, gateway, "HTTPS")
+
+Rel(gateway, users, "/users/*")
+Rel(gateway, items, "/items/*")
+Rel(gateway, orders, "/orders/*")
+Rel(gateway, redis, "Blacklist JWT")
+
+Rel(users, db_users, "SQL")
+Rel(users, redis, "Revoca tokens")
+Rel(items, db_items, "SQL")
+Rel(orders, db_orders, "SQL")
+Rel(metrics, db_metrics, "SQL")
+
+Rel(users, items, "Bloqueo vendedor")
+Rel(users, metrics, "Evento: registro")
+Rel(orders, items, "Stock y cupones")
+Rel(orders, users, "Push tokens")
+Rel(orders, metrics, "Evento: orden")
+Rel(orders, stripe, "Pago")
+Rel(orders, expo, "Push")
+Rel(users, sendgrid, "Email")
+Rel(items, cloudinary, "Imágenes")
+
+Rel(users, obs, "Push métricas", "HTTPS cada 15s")
+Rel(items, obs, "Push métricas", "HTTPS cada 15s")
+Rel(orders, obs, "Push métricas", "HTTPS cada 15s")
+
+@enduml
