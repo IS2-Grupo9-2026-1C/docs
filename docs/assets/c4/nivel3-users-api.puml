@@ -1,0 +1,62 @@
+@startuml nivel3-users-api
+!include <C4/C4_Component>
+
+LAYOUT_TOP_DOWN()
+LAYOUT_WITH_LEGEND()
+title Nivel 3 — Componentes: users-api
+
+Container_Ext(gateway, "API Gateway", "Kong")
+System_Ext(sendgrid, "SendGrid")
+Container_Ext(items, "items-api")
+Container_Ext(metricsApi, "metrics-api")
+Container_Ext(obs, "render-observability", "Pushgateway")
+ContainerDb(db, "users DB", "PostgreSQL")
+ContainerDb(redis, "Redis", "Upstash")
+
+Container_Boundary(c, "users-api") {
+    Component(router, "Router", "FastAPI", "Ruteo de endpoints\npúblicos e internos")
+    Component(auth_handler, "Auth Handler", "Python", "Login, registro y\nrecuperación de contraseña")
+    Component(user_handler, "User Handler", "Python", "Perfil y push tokens")
+    Component(internal_handler, "Internal Handler", "Python", "Bloqueo de usuarios")
+    Component(auth_svc, "Auth Service", "Python", "JWT, hashing y\nvalidación de credenciales")
+    Component(user_svc, "User Service", "Python", "Lógica de perfil\ny dispositivos")
+    Component(user_repo, "User Repository", "SQLAlchemy", "Acceso a la base de datos")
+    Component(email_client, "Email Client", "Python/HTTP", "Envío via SendGrid")
+    Component(items_client, "Items Client", "Python/HTTP", "Notifica bloqueo")
+    Component(metrics_client, "Metrics Client", "Python/HTTP", "Publica eventos")
+    Component(push_client, "Pushgateway Client", "Python/HTTP", "Push de métricas\ncada 15 segundos")
+}
+
+Lay_D(gateway, router)
+Lay_R(auth_handler, user_handler)
+Lay_R(user_handler, internal_handler)
+Lay_D(auth_handler, auth_svc)
+Lay_D(user_handler, user_svc)
+Lay_D(internal_handler, items_client)
+Lay_D(auth_svc, user_repo)
+Lay_D(user_svc, user_repo)
+Lay_R(auth_svc, email_client)
+Lay_R(auth_svc, metrics_client)
+Lay_D(user_repo, db)
+Lay_R(push_client, obs)
+Lay_D(auth_svc, redis)
+
+Rel(gateway, router, "HTTPS")
+Rel(router, auth_handler, "/token, /register")
+Rel(router, user_handler, "/users/me")
+Rel(router, internal_handler, "/internal/block")
+Rel(auth_handler, auth_svc, "")
+Rel(user_handler, user_svc, "")
+Rel(auth_svc, user_repo, "")
+Rel(user_svc, user_repo, "")
+Rel(user_repo, db, "SQL")
+Rel(auth_svc, redis, "Revoca JWT")
+Rel(auth_svc, email_client, "")
+Rel(internal_handler, items_client, "")
+Rel(auth_svc, metrics_client, "")
+Rel(email_client, sendgrid, "SMTP")
+Rel(items_client, items, "HTTP")
+Rel(metrics_client, metricsApi, "HTTP")
+Rel(push_client, obs, "PUT /metrics")
+
+@enduml

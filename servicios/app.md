@@ -1,7 +1,7 @@
 ---
 title: app
 parent: Servicios
-nav_order: 5
+nav_order: 6
 ---
 
 # App
@@ -36,10 +36,14 @@ npm install
 El archivo de configuración está en [src/config/index.ts](src/config/index.ts). Modificá la constante `ENV` para elegir el entorno:
 
 ```ts
-// 'local' apunta a http://localhost:3000
-// 'production' apunta a la URL de producción
+// 'local' apunta al API Gateway local (puerto 8000). En el repo la URL es una IP
+//   de LAN (p. ej. http://192.168.1.38:8000) para poder probar desde un dispositivo
+//   físico; cambiala por la IP de tu máquina o usá http://localhost:8000 en simulador.
+// 'production' apunta a la URL de producción (Render).
 const ENV: Environment = 'local';
 ```
+
+> La URL efectiva se puede sobreescribir sin tocar el código con la variable de entorno `EXPO_PUBLIC_API_URL`.
 
 ## Ejecutar la app
 
@@ -79,14 +83,14 @@ Cada PR a `master` o `develop` ejecuta automáticamente:
 | `lint`      | Verifica reglas de ESLint     |
 | `typecheck` | Compila TypeScript sin emitir |
 
-### CD — Builds automáticos
+### CD: builds automáticos
 
 | Evento                                 | Workflow      | Resultado                             |
 | -------------------------------------- | ------------- | ------------------------------------- |
 | Merge de PR `release/x.x.x` → `master` | `cd.yml`      | APK `app-vx.x.x.apk` → GitHub Release |
 | Manual (Actions → Preview Build)       | `preview.yml` | APK de preview → GitHub Pre-Release   |
 
-Los builds usan `eas build --local` (corren en GitHub Actions, no en los servidores de Expo). Los APKs **no aparecen en expo.dev** — se descargan desde la pestaña **Releases** del repo en GitHub.
+Los builds usan `eas build --local` (corren en GitHub Actions, no en los servidores de Expo). Los APKs **no aparecen en expo.dev**, se descargan desde la pestaña **Releases** del repo en GitHub.
 
 ### Release build (en merge a master)
 

@@ -1,0 +1,62 @@
+@startuml nivel3-items-api
+!include <C4/C4_Component>
+
+LAYOUT_TOP_DOWN()
+LAYOUT_WITH_LEGEND()
+title Nivel 3 — Componentes: items-api
+
+Container_Ext(gateway, "API Gateway", "Kong")
+Container_Ext(ordersApi, "orders-api")
+Container_Ext(usersApi, "users-api")
+Container_Ext(obs, "render-observability", "Pushgateway")
+System_Ext(cloudinary, "Cloudinary")
+ContainerDb(db, "items DB", "PostgreSQL")
+
+Container_Boundary(c, "items-api") {
+    Component(router, "Router", "Go/Gin", "Ruteo con middleware\nde autenticación")
+    Component(item_handler, "Item Handler", "Go", "CRUD de productos,\nbúsqueda y filtros")
+    Component(coupon_handler, "Coupon Handler", "Go", "Gestión de cupones")
+    Component(internal_handler, "Internal Handler", "Go", "Stock y bloqueo\nde vendedores")
+    Component(item_svc, "Item Service", "Go", "Catálogo, stock\ny reservas")
+    Component(coupon_svc, "Coupon Service", "Go", "Validación y\naplicación de cupones")
+    Component(item_repo, "Item Repository", "Go/pgx", "Persistencia de\nproductos y cupones")
+    Component(reservation_repo, "Reservation Repository", "Go/pgx", "Reservas de stock\n(TTL 5 min)")
+    Component(img_client, "Cloudinary Client", "Go/HTTP", "Upload de imágenes")
+    Component(push_client, "Pushgateway Client", "Go/HTTP", "Push de métricas\ncada 15 segundos")
+}
+
+Lay_R(gateway, ordersApi)
+Lay_R(ordersApi, usersApi)
+Lay_D(gateway, router)
+Lay_R(item_handler, coupon_handler)
+Lay_R(coupon_handler, internal_handler)
+Lay_D(item_handler, item_svc)
+Lay_D(coupon_handler, coupon_svc)
+Lay_D(internal_handler, item_svc)
+Lay_D(item_svc, item_repo)
+Lay_D(item_svc, reservation_repo)
+Lay_R(item_svc, img_client)
+Lay_D(item_repo, db)
+Lay_D(reservation_repo, db)
+Lay_R(img_client, cloudinary)
+Lay_R(push_client, obs)
+
+Rel(gateway, router, "HTTPS")
+Rel(usersApi, router, "Bloqueo vendedor")
+Rel(ordersApi, router, "Stock y cupones")
+Rel(router, item_handler, "/items/*")
+Rel(router, coupon_handler, "/coupons/*")
+Rel(router, internal_handler, "/internal/*")
+Rel(item_handler, item_svc, "")
+Rel(coupon_handler, coupon_svc, "")
+Rel(internal_handler, item_svc, "")
+Rel(item_svc, item_repo, "")
+Rel(item_svc, reservation_repo, "Reservas")
+Rel(item_svc, img_client, "")
+Rel(coupon_svc, item_repo, "")
+Rel(item_repo, db, "SQL")
+Rel(reservation_repo, db, "SQL")
+Rel(img_client, cloudinary, "HTTPS")
+Rel(push_client, obs, "PUT /metrics")
+
+@enduml

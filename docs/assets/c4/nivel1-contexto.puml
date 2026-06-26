@@ -1,0 +1,30 @@
+@startuml nivel1-contexto
+!include <C4/C4_Context>
+
+LAYOUT_WITH_LEGEND()
+title Nivel 1 — Contexto del Sistema: Bazaar
+
+Person(usuario, "Usuario", "Comprador y/o vendedor\nque usa la app mobile")
+Person_Ext(admin, "Administrador", "Gestiona usuarios, productos\ny métricas desde el backoffice")
+
+System(bazaar, "Bazaar", "Plataforma de marketplace\nde compra-venta")
+
+System_Ext(stripe, "Stripe", "Pagos con tarjeta")
+System_Ext(sendgrid, "SendGrid", "Emails transaccionales")
+System_Ext(cloudinary, "Cloudinary", "Imágenes de productos")
+System_Ext(expo, "Expo Push", "Notificaciones push")
+
+Lay_L(admin, usuario)
+Lay_R(bazaar, stripe)
+Lay_D(bazaar, sendgrid)
+Lay_D(bazaar, cloudinary)
+Lay_D(bazaar, expo)
+
+Rel(usuario, bazaar, "Usa", "HTTPS")
+Rel(admin, bazaar, "Administra", "HTTPS")
+Rel(bazaar, stripe, "Pagos")
+Rel(bazaar, sendgrid, "Emails")
+Rel(bazaar, cloudinary, "Imágenes")
+Rel(bazaar, expo, "Push notifications")
+
+@enduml
