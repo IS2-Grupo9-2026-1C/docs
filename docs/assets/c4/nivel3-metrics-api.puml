@@ -1,0 +1,40 @@
+@startuml nivel3-metrics-api
+!include <C4/C4_Component>
+
+LAYOUT_TOP_DOWN()
+LAYOUT_WITH_LEGEND()
+title Nivel 3 — Componentes: metrics-api
+
+Container_Ext(usersApi, "users-api")
+Container_Ext(ordersApi, "orders-api")
+Container_Ext(backoffice, "Backoffice")
+ContainerDb(db, "metrics DB", "PostgreSQL")
+
+Container_Boundary(c, "metrics-api") {
+    Component(router, "Router", "FastAPI", "Endpoints de\ningesta y consulta")
+    Component(user_handler, "User Metrics Handler", "Python", "Métricas de\nusuarios registrados")
+    Component(order_handler, "Order Metrics Handler", "Python", "Métricas de\nórdenes y ventas")
+    Component(metrics_svc, "Metrics Service", "Python", "Agrega y calcula\nmétricas por período")
+    Component(repo, "Repository", "SQLAlchemy", "Persistencia de\neventos y agregados")
+}
+
+Lay_R(usersApi, ordersApi)
+Lay_R(ordersApi, backoffice)
+Lay_D(usersApi, router)
+Lay_R(user_handler, order_handler)
+Lay_D(user_handler, metrics_svc)
+Lay_D(order_handler, metrics_svc)
+Lay_D(metrics_svc, repo)
+Lay_D(repo, db)
+
+Rel(usersApi, router, "Evento: registro")
+Rel(ordersApi, router, "Evento: orden")
+Rel(backoffice, router, "GET /metrics/*")
+Rel(router, user_handler, "/metrics/users/*")
+Rel(router, order_handler, "/metrics/orders/*")
+Rel(user_handler, metrics_svc, "")
+Rel(order_handler, metrics_svc, "")
+Rel(metrics_svc, repo, "")
+Rel(repo, db, "SQL")
+
+@enduml
