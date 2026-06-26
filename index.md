@@ -17,6 +17,7 @@ El sistema es una plataforma de **Bazaar** donde los usuarios pueden vender y co
 
 | Sección | Descripción |
 |---|---|
+| [Guía de usuario](guia-usuario/guia-usuario) | Recorrido paso a paso de los principales flujos de la app mobile |
 | [Arquitectura](arquitectura) | Diagrama y descripción de los componentes del sistema |
 | [Checkout](checkout) | Flujo de compra, reserva de stock, concurrencia y pagos |
 | [Tech Stack](tech-stack) | Tecnologías utilizadas en frontend, backend, bases de datos y más |
