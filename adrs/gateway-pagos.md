@@ -32,6 +32,27 @@ La moneda de cobro es **USD** (`Currency: "usd"`).
 - **Stripe en ARS:** se descartó porque en modo test, con moneda ARS, las tarjetas mock que simulan rechazos (fondos insuficientes y demás códigos de error) no disparan el comportamiento esperado. Como necesitábamos poder probar el camino de pago rechazado de punta a punta, no era viable.
 - **Stripe en USD (elegida):** las tarjetas de prueba de rechazo funcionan correctamente, lo que permite ejercitar tanto el camino feliz como los rechazos. La contrapartida es la limitación de montos descrita abajo.
 
+## Integración en la app móvil
+
+El SDK de Stripe para React Native (`@stripe/stripe-react-native`) incluye código nativo (módulos iOS y Android compilados), por lo que **no es compatible con Expo Go**: al correr la app en Expo Go el módulo nativo no está disponible y cualquier import directo crashea en runtime.
+
+Para resolverlo, [stripe-provider.tsx](../../app/src/lib/stripe-provider.tsx) detecta el entorno de ejecución en runtime:
+
+```ts
+const isExpoGo = Constants.executionEnvironment === ExecutionEnvironment.StoreClient;
+
+const StripeProvider = isExpoGo || !config.stripePublishableKey
+  ? null
+  : require('@stripe/stripe-react-native').StripeProvider;
+
+export const stripeEnabled = !!StripeProvider;
+```
+
+- Si corre en **Expo Go** o la publishable key no está configurada, `StripeProvider` queda en `null` y `stripeEnabled` es `false`.
+- Si corre en un **build nativo** (development build, EAS build o standalone) con la key presente, se importa el módulo real y `stripeEnabled` es `true`.
+
+El `CheckoutScreen` ramifica según `stripeEnabled`: cuando es `false` muestra el selector de opciones mock (`mock_ok_*`, `mock_declined_*`, `mock_funds_*`, `mock_timeout_*`), que son procesadas por el `MockPaymentGateway` del backend. Así se puede ejercitar el flujo completo de checkout —incluyendo rechazos y timeouts— sin necesidad de un build nativo ni de claves de Stripe.
+
 ## Consecuencias
 
 - El cobro queda atado a USD para que las tarjetas de prueba de rechazo funcionen, lo que habilita probar el flujo completo de aprobación y rechazo.
