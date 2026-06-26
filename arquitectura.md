@@ -5,6 +5,54 @@ nav_order: 2
 
 # Arquitectura del Sistema
 
+## Diagrama C4
+
+El sistema se documenta siguiendo el [C4 Model](https://c4model.com/), que describe la arquitectura en niveles de abstracción progresiva: Contexto → Contenedores → Componentes.
+
+---
+
+### Nivel 1 — Contexto del Sistema
+
+Muestra a Bazaar como un sistema único y las entidades externas que interactúan con él.
+
+![Diagrama de Contexto](assets/img/nivel1-contexto.png)
+
+---
+
+### Nivel 2 — Contenedores
+
+Desglosa el interior de Bazaar en sus aplicaciones y servicios individuales, incluyendo el stack de observabilidad.
+
+![Diagrama de Contenedores](assets/img/nivel2-contenedores.png)
+
+---
+
+### Nivel 3 — Componentes
+
+Un diagrama por cada microservicio, mostrando sus módulos internos principales.
+
+#### users-api
+
+![Componentes users-api](assets/img/nivel3-users-api.png)
+
+#### items-api
+
+![Componentes items-api](assets/img/nivel3-items-api.png)
+
+#### orders-api
+
+![Componentes orders-api](assets/img/nivel3-orders-api.png)
+
+#### metrics-api
+
+![Componentes metrics-api](assets/img/nivel3-metrics-api.png)
+
+#### render-observability
+
+![Componentes render-observability](assets/img/nivel3-render-observability.png)
+
+---
+
 ## Visión General
 
 El sistema está diseñado como una arquitectura de **microservicios** con un API Gateway centralizado que actúa como punto de entrada único para todos los clientes.
