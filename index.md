@@ -21,7 +21,6 @@ El sistema es una plataforma de **Bazaar** donde los usuarios pueden vender y co
 | [Checkout](checkout) | Flujo de compra, reserva de stock, concurrencia y pagos |
 | [Tech Stack](tech-stack) | Tecnologías utilizadas en frontend, backend, bases de datos y más |
 | [Pruebas de Performance](performance/) | Informe de carga, stress, capacidad e idempotencia concurrente |
-| [Infraestructura](infraestructura) | Hosting, CI/CD, base de datos y decisiones de infraestructura |
 | [Validación de integración](validacion-integracion) | Procedimiento para mantener vivos los servicios remotos y ejecutar el smoke del flujo crítico antes de cambios a producción |
 | [Uso de IA](uso-de-ia) | Uso de herramientas de inteligencia artificial en el desarrollo |
 | [ADRs](adrs) | Decisiones de arquitectura del sistema |
