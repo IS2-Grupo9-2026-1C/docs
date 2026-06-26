@@ -1,0 +1,19 @@
+adrs/gateway-pagos.md
+  s_ad9af4358bd8c9::t_4922a5e502e362 35-55
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "7c1d41bc1a07e8917794223e931a84d4728afe02",
+  "prompts": {},
+  "sessions": {
+    "s_ad9af4358bd8c9": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1a25da5f-c43e-49ad-baf4-bc8a0fd2be0b",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Ezequiel Martin Tosto Valenzuela <tostoezequiel1@gmail.com>"
+    }
+  }
+}
