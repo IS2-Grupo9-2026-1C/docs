@@ -25,15 +25,12 @@ Los escenarios considerados en este informe son:
 - `load`: recorrido completo de compra con concurrencia sostenida.
 - `stress`: incremento rápido de usuarios virtuales para observar degradación y recuperación.
 - `capacity`: medición de tasa sostenible sobre lecturas del catálogo.
-- `concurrency`: validación de idempotencia en `checkout`.
 
 ## Resumen ejecutivo
 
 Las corridas muestran que el sistema soporta correctamente el flujo principal de compra con hasta `10 VUs` en una ventana corta, sin errores HTTP y con latencias generales aceptables. El servicio más sensible en la prueba de carga estable fue `users-api`, ya que el endpoint `GET /users/me` superó el umbral de `p95 < 1000 ms`.
 
 Sobre el catálogo, la plataforma sostuvo sin errores una tasa de `40 req/s` durante `3 minutos` con `p95` cercano a `212 ms` y sin `dropped_iterations`. Al subir a `80 req/s`, la latencia siguió estable, pero aparecieron `10 dropped_iterations`, por lo que esa tasa no puede considerarse sostenible en este ambiente bajo la configuración usada.
-
-El hallazgo más importante no es de capacidad sino de correctitud: la prueba de concurrencia detectó una condición de carrera en `orders-api` para `POST /orders/checkout` con la misma `idempotencyKey`, generando respuestas `500` aun cuando la base evita la duplicación de órdenes.
 
 Como panorama general, la siguiente captura del dashboard principal `Render APIs - Operational` durante la corrida `make load VUS=10 DURATION=3m` permite ver de forma transversal cómo se distribuyeron el tráfico y la latencia entre los microservicios involucrados en el flujo de compra.
 
@@ -48,7 +45,6 @@ Como panorama general, la siguiente captura del dashboard principal `Render APIs
 | 2026-06-23 | 01:07 a 01:11:45 | `make capacity RATE=10 CAPACITY_DURATION=3m DISABLE_PRODUCTS_AFTER_TEST=false` | Exitosa |
 | 2026-06-23 | 01:14 a 01:18:30 | `make capacity RATE=40 CAPACITY_DURATION=3m DISABLE_PRODUCTS_AFTER_TEST=false` | Exitosa |
 | 2026-06-23 | 01:20 a 01:25 | `make capacity RATE=80 CAPACITY_DURATION=3m DISABLE_PRODUCTS_AFTER_TEST=false` | Falla threshold por `dropped_iterations=10` |
-| s/d | s/d | `make concurrency CONCURRENT_REQUESTS=20` | Detecta bug de idempotencia en `checkout` |
 
 ## Resultados por escenario
 
@@ -200,35 +196,6 @@ Conclusión general de capacidad:
 
 Con la evidencia actual, la capacidad observable y sostenible del catálogo es al menos `40 req/s` durante `3 minutos`. La corrida de `80 req/s` es prometedora por latencia, pero todavía no es válida como capacidad consolidada por la aparición de iteraciones descartadas.
 
-### 4. Concurrencia e idempotencia en checkout
-
-Corrida:
-
-```bash
-make concurrency CONCURRENT_REQUESTS=20
-```
-
-Hallazgo:
-
-- Se detectó una condición de carrera en `orders-api` cuando múltiples requests concurrentes ejecutan `POST /orders/checkout` con la misma `idempotencyKey`.
-- El comportamiento esperado era que todas las respuestas devolvieran éxito y referenciaran la misma orden.
-- El comportamiento observado fue mixto: algunas requests devolvieron `201`, varias devolvieron `500`, y la base persistió una única orden.
-
-Interpretación técnica:
-
-- La restricción única de base de datos protege la integridad de los datos.
-- La capa de aplicación no resuelve correctamente la colisión concurrente.
-- El problema impacta sobre un flujo crítico del negocio, porque puede manifestarse ante doble click, reintentos automáticos o conexiones inestables.
-
-Evidencia visual:
-
-La captura de `Orders API Render - Operational` resulta consistente con este hallazgo: aparecen respuestas `500` junto con respuestas exitosas para la misma ventana de ejecución, y la ruta de `checkout` concentra la mayor latencia del servicio. La ventana visible en el dashboard corresponde a un tramo breve de la corrida de concurrencia, aproximadamente entre `17:18:45` y `17:19:20`.
-
-![Dashboard de orders-api durante la prueba de concurrencia de checkout](orders-api-2026-06-23-01-20.png)
-
-Prioridad:
-
-Este hallazgo debe considerarse de alta prioridad, porque afecta la confiabilidad del checkout aun sin generar órdenes duplicadas.
 
 ## Interpretación por microservicio
 
@@ -254,9 +221,6 @@ Este hallazgo debe considerarse de alta prioridad, porque afecta la confiabilida
 
 El sistema mostró un desempeño general satisfactorio en pruebas cortas de carga y stress, con especial solidez en las lecturas de catálogo. La evidencia disponible permite reportar como resultado confiable una capacidad observable de al menos `40 req/s` para el escenario de catálogo.
 
-Los dos puntos de mejora más claros son:
+El puntoa de mejora más claro es:
 
 - la latencia de `users-api` en el flujo estable de compra;
-- la condición de carrera de `orders-api` frente a requests concurrentes con la misma `idempotencyKey`.
-
-Ambos hallazgos son relevantes, pero el segundo es el más crítico por su impacto directo sobre la robustez del checkout.
